@@ -40,7 +40,7 @@ if errorlevel 1 (
     echo.
 )
 
-az --version 2>NUL
+call az --version 2>NUL
 if errorlevel 1 (
     echo ERR: AZ CLI Not Installed 
     start "" https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli
@@ -48,3 +48,12 @@ if errorlevel 1 (
     echo AZ CLI Successfully Installed
     echo.
 )
+
+
+call az extension add --name azure-iot
+call az extension update --name azure-iot
+call az login
+call az extension add --name account
+call az account list
+call az account tenant list
+
