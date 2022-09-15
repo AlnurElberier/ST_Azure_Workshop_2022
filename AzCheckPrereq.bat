@@ -22,23 +22,25 @@ if errorlevel 1 (
 )
 
 
-pip --version 2>NUL
-if errorlevel 1 (
-    echo ERR: pip Not Installed 
-    start "" https://www.geeksforgeeks.org/how-to-install-pip-on-windows/
-) else (
-    echo pip Successfully Installed
-    echo.
-)
+@REM pip --version 2>NUL
+@REM if errorlevel 1 (
+@REM     echo ERR: pip Not Installed 
+@REM     start "" https://www.geeksforgeeks.org/how-to-install-pip-on-windows/
+@REM ) else (
+@REM     echo pip Successfully Installed
+@REM     echo.
+@REM )
 
-git --version 2>NUL
-if errorlevel 1 (
-    echo ERR: Git Not Installed 
-    start "" https://git-scm.com/download/win
-) else (
-    echo Git Successfully Installed
-    echo.
-)
+@REM git --version 2>NUL
+@REM if errorlevel 1 (
+@REM     echo ERR: Git Not Installed 
+@REM     start "" https://git-scm.com/download/win
+@REM ) else (
+@REM     echo Git Successfully Installed
+@REM     echo.
+@REM )
+
+call pip install pyserial
 
 call az --version 2>NUL
 if errorlevel 1 (
