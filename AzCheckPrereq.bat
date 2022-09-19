@@ -54,7 +54,7 @@ if errorlevel 1 (
 
 call az extension add --name azure-iot
 call az extension update --name azure-iot
-call az login
+call az login --allow-no-subscription
 call az extension add --name account
 call az account list
 call az account tenant list
