@@ -59,3 +59,5 @@ call az extension add --name account
 call az account list
 call az account tenant list
 
+
+pause
