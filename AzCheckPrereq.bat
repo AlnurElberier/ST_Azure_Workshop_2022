@@ -4,9 +4,11 @@ set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeP
 
 
 if exist %stm32programmercli% ( 
+    echo.
     echo STM32CubeProgrammer Successfully Installed
     echo.
 ) else (
+    echo.
     echo ERR: STM32CubeProgrammer Not Installed 
     echo You will be redierected to download STM32CubeProgrammer
     echo Please Install STM32CubeProgrammer and run the script again
@@ -18,39 +20,46 @@ if exist %stm32programmercli% (
 
 python --version 2>NUL
 if errorlevel 1 (
+    echo.
     echo ERR: Python Not Installed 
-    echo You will be redierected to download Python
     echo Please Install Python and run the script again
-    timeout 5
+    echo You will be redierected to download Python
+    echo WARNING: MAKE SURE TO ADD PYTHON TO PATH AND INCLUDE PIP IN INSTALL
+    pause
     start "" https://www.python.org/downloads/
     goto :err
 ) else (
+    echo.
     echo Python Successfully Installed
     echo.
 )
 
 
-pi --version 2>NUL
+pip --version 2>NUL
 if errorlevel 1 (
+    echo.
     echo ERR: pip Not Installed 
     echo Pip will now be installed.
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     python get-pip.py
 ) else (
+    echo.
     echo pip Successfully Installed
     echo.
     call python -m pip install pyserial
 )
 
 
-call azc --version 2>NUL
+call az --version 2>NUL
 if errorlevel 1 (
+    echo.
     echo ERR: AZ CLI Not Installed 
-    echo You will be redierected to download AZCLI
     echo Please Install AZCLI and run the script again
-    timeout 5
+    echo You will be redierected to download AZCLI
+    pause
     start "" https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli
 ) else (
+    echo.
     echo AZ CLI Successfully Installed
     echo.
 )
@@ -79,4 +88,3 @@ echo.
 echo Requirement Check Success
 
 :err
-pause
