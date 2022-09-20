@@ -86,5 +86,6 @@ for %%i in (tenant.txt) do (
 
 echo.
 echo Requirement Check Success
+pause
 
 :err
