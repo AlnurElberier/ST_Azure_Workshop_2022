@@ -9,10 +9,10 @@ if exist %stm32programmercli% (
     echo.
 ) else (
     echo.
-    echo ERR: STM32CubeProgrammer Not Installed 
+    echo ERR: STM32CubeProgrammer Not Installed
     echo You will be redierected to download STM32CubeProgrammer
     echo Please Install STM32CubeProgrammer and run the script again
-    timeout 5
+    pause
     start "" https://www.st.com/en/development-tools/stm32cubeprog.html#get-software
     goto :err
 )
@@ -39,7 +39,7 @@ python -m pip --version 2>NUL
 if errorlevel 1 (
     echo.
     echo ERR: pip Not Installed 
-    echo Pip will now be installed.
+    echo Pip will now be installed
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     python get-pip.py
     echo.
@@ -49,6 +49,7 @@ if errorlevel 1 (
     echo.
     echo Installing pyserial...
     call python -m pip install pyserial
+    echo.
 )
 
 
@@ -66,16 +67,19 @@ if errorlevel 1 (
     echo.
 )
 
-
+echo.
 call az extension add --name azure-iot 
+echo.
 call az extension update --name azure-iot
+echo.
 call az extension add --name account
+echo.
 call az extension update --name account
-
+echo.
 
 
 echo Redirecting to a browser window to log in to Azure Cli
-echo Please return to the script after logging in. 
+echo Please return to the script after logging in
 pause
 call az login --allow-no-subscription
 call az account tenant list > tenant.txt
@@ -83,16 +87,18 @@ call az account tenant list > tenant.txt
 for %%i in (tenant.txt) do (
     if %%~z%i LSS 100 (
         echo. 
+        echo.
         echo You azure account is not associated with a tenant
         echo Send an email to alnur.elberier@st.com to request to be added to a tenant
-        echo Check your email to accept the tenant invitation. 
-        echo Run this script again after joining the tenant. 
+        echo Check your email to accept the tenant invitation
+        echo Run this script again after joining the tenant
         goto :err
     )
 )
 
 echo.
-echo Requirement Check Success
+echo Requirement Check 
+echo.
 pause
 
 :err
