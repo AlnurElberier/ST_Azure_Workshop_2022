@@ -35,17 +35,19 @@ if errorlevel 1 (
 )
 
 
-pip --version 2>NUL
+python -m pip --version 2>NUL
 if errorlevel 1 (
     echo.
     echo ERR: pip Not Installed 
     echo Pip will now be installed.
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     python get-pip.py
+    echo.
 ) else (
     echo.
     echo pip Successfully Installed
     echo.
+    echo Installing pyserial...
     call python -m pip install pyserial
 )
 
@@ -70,6 +72,11 @@ call az extension update --name azure-iot
 call az extension add --name account
 call az extension update --name account
 
+
+
+echo Redirecting to a browser window to log in to Azure Cli
+echo Please return to the script after logging in. 
+pause
 call az login --allow-no-subscription
 call az account tenant list > tenant.txt
 
