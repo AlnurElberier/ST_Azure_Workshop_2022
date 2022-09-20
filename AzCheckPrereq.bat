@@ -2,6 +2,18 @@
 
 set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 
+echo. 
+
+choice /M "Have you downloaded X-CUBE-AZURE" /c YN
+
+if errorlevel 2 (
+    echo.
+    echo Please download the latest version of X-CUBE-AZURE and run the script again
+    echo You will be redierected to download X-CUBE-AZURE
+    pause
+    start "" https://www.st.com/en/embedded-software/x-cube-azure.html#get-software
+    goto err
+)
 
 if exist %stm32programmercli% ( 
     echo.
@@ -97,7 +109,7 @@ for %%i in (tenant.txt) do (
 )
 
 echo.
-echo Requirement Check 
+echo Successfull Requirement Check 
 echo.
 pause
 
