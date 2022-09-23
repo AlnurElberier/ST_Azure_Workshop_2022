@@ -113,6 +113,9 @@ if %rerun% (
             echo Run this script again after joining the tenant
         )
     )
+
+
+    call python .\scripts\configureJson.py
 )
 
 
@@ -128,7 +131,6 @@ goto:exit
 
 :err
 echo Plese run the script again
-
+pause
 
 :exit
-pause
