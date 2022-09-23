@@ -4,7 +4,7 @@ import random
 
 CONFIG_PATH     = 'C:\\STM32CubeExpansion_Cloud_AZURE_V2.0.1\\Projects\\B-U585I-IOT02A\\Applications\\TFM_Azure_IoT\\AzureScripts\\Config.json'
 SUB             = 'y'
-APP_NAME        = 'handson'
+APP_NAME        = 'montreal'
 SSID            = 'st_iot_demo'
 PSWD            = 'stm32u585'
 RESOURCE_GROUP  = 'iot-demo'
@@ -32,7 +32,7 @@ def main():
     credentials = loadCredentials(CONFIG_PATH)
 
     credentials['Entered']['Subscription'] = SUB
-    credentials['Entered']['AppName'] = APP_NAME + ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
+    credentials['Entered']['AppName'] = APP_NAME + '-'.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
     credentials['Entered']['SSID'] = SSID
     credentials['Entered']['Password'] = PSWD
     credentials['Entered']['ResourceGroup'] = RESOURCE_GROUP
