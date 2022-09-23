@@ -99,7 +99,6 @@ if %rerun% (
 
     echo Redirecting to a browser window to log in to Azure Cli
     echo Please return to the script after logging in
-    pause
     call az login --allow-no-subscription
     call az account tenant list > tenant.txt
 
