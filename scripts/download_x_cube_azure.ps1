@@ -1,0 +1,1 @@
+Invoke-WebRequest "https://www.st.com/content/ccc/resource/technical/software/firmware/group1/e3/d5/d6/aa/6d/ef/46/28/x-cube-azure_v2-0-1/files/x-cube-azure_v2-0-1.zip/jcr:content/translations/en.x-cube-azure_v2-0-1.zip" -outfile "en.x-cube-azure_v2-0-1.zip"
