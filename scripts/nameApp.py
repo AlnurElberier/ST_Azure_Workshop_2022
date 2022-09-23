@@ -7,8 +7,8 @@ SUB             = 'y'
 APP_NAME        = 'montreal'
 SSID            = 'st_iot_demo'
 PSWD            = 'stm32u585'
-RESOURCE_GROUP  = 'iot-demo'
-LOCATION        = 'westus'
+RESOURCE_GROUP  = 'montreal'
+LOCATION        = 'eastus'
 
 
 
@@ -32,7 +32,7 @@ def main():
     credentials = loadCredentials(CONFIG_PATH)
 
     credentials['Entered']['Subscription'] = SUB
-    credentials['Entered']['AppName'] = APP_NAME + '-'.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
+    credentials['Entered']['AppName'] = APP_NAME + '-' + ''.join([str(random.randint(0, 999)).zfill(3) for _ in range(2)])
     credentials['Entered']['SSID'] = SSID
     credentials['Entered']['Password'] = PSWD
     credentials['Entered']['ResourceGroup'] = RESOURCE_GROUP
