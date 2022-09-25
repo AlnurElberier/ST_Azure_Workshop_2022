@@ -6,10 +6,12 @@ set rerun=1==0
 
 set DOWNLOAD_LINK_STM32_CUBE_PROG="https://negzxq.sn.files.1drv.com/y4m5-WjjhqkTLyb2AmUUahxlP5NNRJuI6eCQ8-8Q7S2GvJLDEIPqoQ-SenyXrm1iUschFYDiZv1Gky_qNsdafs94wi00s-GMwCnCe3ANApfh96yVoWdr3vEvDIV6DQkI_AHInvaxUW_a_8Zgs08ESSwICrg7tjBWz4tEtS579T7USqU2XqL4_U12dt8rffwcZckdz0N7xWHN4FiQDviYizGog"
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
-set DOWNLOAD_LINK_AZCLI=https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi
+set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
 set DOWNLOAD_LINK_X_CUBE_AZURE="https://nejo0q.sn.files.1drv.com/y4mYF8oM2L4xrPIeHzInK8O1fqyT4P3rXB6Iy3AmDBy4s5iVyANS3IpfjkzpSSLY5N-wdPWUSZ5bCf8F3yif8HCs4dnmit407VqkuLmB4x2dva5oyrrsfKgFucPMHJS7-GUzThaDW-RH1TthaUYhA_3bqvt4JgJ27wcGXaODeBQRuM66jZDXeM_enQXNLT-6C-gx79YFPU1I6XOe8JHIA0XTQ"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
 echo. 
+
+IF NOT EXIST "tools\NUL" mkdir "tools"
 
 if exist %stm32programmercli% ( 
     echo.
