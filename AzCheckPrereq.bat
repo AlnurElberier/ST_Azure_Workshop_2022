@@ -13,7 +13,7 @@ if exist %stm32programmercli% (
 ) else (
     echo.
     echo Installing STM32CubeProgrammer
-    call powershell  .\scripts\download_stm32cubeprog.ps1
+    curl "https://public.sn.files.1drv.com/y4mC3dcNQf9JVHYkFcuZBk0keyYWYY_RlV07C99jUaHlO9-hOd8YRGrtPwsDaMa20EO35GwUeFC9Lw8q-2Ifw8yv1fFd-pYUGeS94MiUue7W7dnWMVxBBTg-iI8MR397vRsVBYuzdo_hDTCBOAH4Xhs4LViTCTBNHMPdfLGypC9Jd3frFrvBT9C5H_o77cbFKkvEe4E62pIueKJ7aWXac6K5CGNhabF9ycJBOQJms1gZtM" -o "en.stm32cubeprg-win64_v2-11-0.zip"
     call powershell -command "Expand-Archive en.stm32cubeprg-win64_v2-11-0.zip"
     call start .\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
     echo.
@@ -54,7 +54,7 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
     echo.
 ) else (
     echo Downloading X-CUBE-AZURE
-    call powershell  .\scripts\download_x_cube_azure.ps1
+    curl "https://public.sn.files.1drv.com/y4my4D2H2XthqPvH0Co2SuTHQfSaKll2lOR_TI_F68Rl_pRQNYJmtaMnUimHSZtPmKDLwHUnotFudCMg3YOxA5_oQcYyNF1_4R983AvTCv9BlqvQnZkiAUKhi9nZa7FiaCcnuL3ZzGQZKM4th5rgor86YcCPCaafSYLdLK-RX6GalLXhNX81u4zGTUqzFKav5kq0_s9MTF8QuuJywebLN3StBrdqKlz3PBeFeb1wEA0yYE" -o "en.x-cube-azure_v2-0-1.zip"
     echo Extracting X-CUBE-AZURE
     powershell -command "Expand-Archive en.x-cube-azure_v2-0-1.zip C:\."
 )
