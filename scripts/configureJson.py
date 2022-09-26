@@ -2,7 +2,7 @@ import json
 import random
 
 
-CONFIG_PATH     = 'C:\\STM32CubeExpansion_Cloud_AZURE_V2.0.1\\Projects\\B-U585I-IOT02A\\Applications\\TFM_Azure_IoT\\AzureScripts\\Config.json'
+CONFIG_PATH     = 'C:\\STM32CubeExpansion_Cloud_AZURE_V2.1.0\\Projects\\B-U585I-IOT02A\\Applications\\TFM_Azure_IoT\\AzureScripts\\Config.json'
 SUB             = 'y'
 APP_NAME        = 'montreal'
 SSID            = 'st_iot_demo'

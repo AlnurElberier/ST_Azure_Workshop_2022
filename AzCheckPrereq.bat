@@ -1,14 +1,15 @@
 @echo off
 
 set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
-set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.0.1"
+set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
 set rerun=1==0
 
 set DOWNLOAD_LINK_STM32_CUBE_PROG="https://negzxq.sn.files.1drv.com/y4m5-WjjhqkTLyb2AmUUahxlP5NNRJuI6eCQ8-8Q7S2GvJLDEIPqoQ-SenyXrm1iUschFYDiZv1Gky_qNsdafs94wi00s-GMwCnCe3ANApfh96yVoWdr3vEvDIV6DQkI_AHInvaxUW_a_8Zgs08ESSwICrg7tjBWz4tEtS579T7USqU2XqL4_U12dt8rffwcZckdz0N7xWHN4FiQDviYizGog"
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
 set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
-set DOWNLOAD_LINK_X_CUBE_AZURE="https://nejo0q.sn.files.1drv.com/y4mYF8oM2L4xrPIeHzInK8O1fqyT4P3rXB6Iy3AmDBy4s5iVyANS3IpfjkzpSSLY5N-wdPWUSZ5bCf8F3yif8HCs4dnmit407VqkuLmB4x2dva5oyrrsfKgFucPMHJS7-GUzThaDW-RH1TthaUYhA_3bqvt4JgJ27wcGXaODeBQRuM66jZDXeM_enQXNLT-6C-gx79YFPU1I6XOe8JHIA0XTQ"
+set DOWNLOAD_LINK_X_CUBE_AZURE="https://public.sn.files.1drv.com/y4mfaLR9k-kQrvQ-_IOIbQVJMPKe-EtlsAOxUn_IiU3T4QOfq3Fds3mqHb6PvTw5jEVQR5STIMOW14fST6XlJrNMNFiL3DRkS61egcz4sqZK6Beuy1OQi0CgKewc6UzbSQfFHJBAtUjxsXljD0iPBT0oRDxT5elLoLKISc7HhbmHbNId4_5fKkegY0-7maZkxJ921pXHBRaKg28naNp7yV9PFyh23mGXuXRZsgF_w6e8mA"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
+
 echo. 
 
 IF NOT EXIST "tools\NUL" mkdir "tools"
@@ -40,7 +41,6 @@ if errorlevel 1 (
     echo.
 )
 
-    
 
 call az --version 2>NUL
 if errorlevel 1 (
@@ -63,9 +63,9 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
     echo.
 ) else (
     echo Downloading X-CUBE-AZURE
-    curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-0-1.zip"
+    curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
     echo Extracting X-CUBE-AZURE
-    powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-0-1.zip C:\."
+    powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
 
 
@@ -92,8 +92,6 @@ if %rerun% (
     call python -m pip install pyserial
 
 
-
-
     echo.
     call az extension add --name azure-iot 
     echo.
@@ -105,7 +103,6 @@ if %rerun% (
     echo.
 
 
-
     echo Redirecting to a browser window to log in to Azure Cli
     echo Please return to the script after logging in
     call az login --allow-no-subscription
@@ -114,15 +111,15 @@ if %rerun% (
 )
 
 
-
-
 echo.
 echo Successfull Requirement Check 
 echo.
 pause
 
-%SystemRoot%\explorer.exe "C:\STM32CubeExpansion_Cloud_AZURE_V2.0.1\Projects\B-U585I-IOT02A\Applications\TFM_Azure_IoT\AzureScripts"
+
+%SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%\Projects\B-U585I-IOT02A\Applications\TFM_Azure_IoT\AzureScripts"
 goto:exit
+
 
 :err
 echo Plese run the script again
