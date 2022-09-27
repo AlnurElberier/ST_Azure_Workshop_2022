@@ -117,7 +117,7 @@ echo.
 pause
 
 
-%SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%\Projects\B-U585I-IOT02A\Applications\TFM_Azure_IoT\AzureScripts"
+%SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
 goto:exit
 
 
