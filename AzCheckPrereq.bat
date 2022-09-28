@@ -19,10 +19,12 @@ set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeP
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
 set rerun=1==0
 
-set DOWNLOAD_LINK_STM32_CUBE_PROG="https://public.sn.files.1drv.com/y4mV4aEXiZ1Jjf_PeZbJOCAQ-6Tj5JK8sDxfp9Fy0vTFd3ooOd35NCq2hOgcd5-MSJJ8CYRnqkEaoBLXNG6k1RdE5mUpbw_5kgz_lGII1EctiUD9QKmhLyoF4vkBHIzDmmWgKDKnf6yRqaCyvDO7oIdy8sr2qfY4JWdWC5zZqtBE69xs509DIq70sBAQ3d9EDq-Ealzdk0mTGslk-EWH3apFtYt0frh_sXJZQIs_0mmfWY"
+set DOWNLOAD_LINK_STM32_CUBE_PROG="https://stm32iot.blob.core.windows.net/firmware/en.stm32cubeprg-win64_v2-11-0.zip"
+
+set DOWNLOAD_LINK_X_CUBE_AZURE="https://stm32iot.blob.core.windows.net/firmware/en.x-cube-azure_v2-1-0.zip"
+
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
 set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
-set DOWNLOAD_LINK_X_CUBE_AZURE="https://public.sn.files.1drv.com/y4mR4fDOh_EKvtZ2oizhYpEEBb4DjvnnMXZFN2ZMgU4hbvPUYnn3MYR5RvjAaJWOdkxG_xh_I3bRTCCqj_jAGr6ZGIJDgiEQgjSjFoEnHMiN_QL15X9D9rRVlhl5RrnPycrhAk7qTTHgNhFG0URRQnABxUr4ekxNwBQqYp2RBJg6Wkfa8Dp5QDwvBKrdaQnOIotWspZfGhpuOuzTXWg1JLFmi8xBYvnUH5mtPwvOjk9e0I"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
 echo. 
 
