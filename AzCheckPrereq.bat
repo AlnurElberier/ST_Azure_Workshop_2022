@@ -121,6 +121,9 @@ if %rerun% (
 
     echo Redirecting to a browser window to log in to Azure Cli
     echo Please return to the script after logging in
+
+    start notepad "credentials.txt"
+
     call az login --allow-no-subscription
 
     call python .\scripts\configureJson.py
