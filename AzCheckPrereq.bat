@@ -19,12 +19,11 @@ set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeP
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
 set rerun=1==0
 
-set DOWNLOAD_LINK_STM32_CUBE_PROG="https://negzxq.sn.files.1drv.com/y4m5-WjjhqkTLyb2AmUUahxlP5NNRJuI6eCQ8-8Q7S2GvJLDEIPqoQ-SenyXrm1iUschFYDiZv1Gky_qNsdafs94wi00s-GMwCnCe3ANApfh96yVoWdr3vEvDIV6DQkI_AHInvaxUW_a_8Zgs08ESSwICrg7tjBWz4tEtS579T7USqU2XqL4_U12dt8rffwcZckdz0N7xWHN4FiQDviYizGog"
+set DOWNLOAD_LINK_STM32_CUBE_PROG="https://public.sn.files.1drv.com/y4mV4aEXiZ1Jjf_PeZbJOCAQ-6Tj5JK8sDxfp9Fy0vTFd3ooOd35NCq2hOgcd5-MSJJ8CYRnqkEaoBLXNG6k1RdE5mUpbw_5kgz_lGII1EctiUD9QKmhLyoF4vkBHIzDmmWgKDKnf6yRqaCyvDO7oIdy8sr2qfY4JWdWC5zZqtBE69xs509DIq70sBAQ3d9EDq-Ealzdk0mTGslk-EWH3apFtYt0frh_sXJZQIs_0mmfWY"
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
 set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
-set DOWNLOAD_LINK_X_CUBE_AZURE="https://public.sn.files.1drv.com/y4mfaLR9k-kQrvQ-_IOIbQVJMPKe-EtlsAOxUn_IiU3T4QOfq3Fds3mqHb6PvTw5jEVQR5STIMOW14fST6XlJrNMNFiL3DRkS61egcz4sqZK6Beuy1OQi0CgKewc6UzbSQfFHJBAtUjxsXljD0iPBT0oRDxT5elLoLKISc7HhbmHbNId4_5fKkegY0-7maZkxJ921pXHBRaKg28naNp7yV9PFyh23mGXuXRZsgF_w6e8mA"
+set DOWNLOAD_LINK_X_CUBE_AZURE="https://public.sn.files.1drv.com/y4mR4fDOh_EKvtZ2oizhYpEEBb4DjvnnMXZFN2ZMgU4hbvPUYnn3MYR5RvjAaJWOdkxG_xh_I3bRTCCqj_jAGr6ZGIJDgiEQgjSjFoEnHMiN_QL15X9D9rRVlhl5RrnPycrhAk7qTTHgNhFG0URRQnABxUr4ekxNwBQqYp2RBJg6Wkfa8Dp5QDwvBKrdaQnOIotWspZfGhpuOuzTXWg1JLFmi8xBYvnUH5mtPwvOjk9e0I"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
-
 echo. 
 
 IF NOT EXIST "tools\NUL" mkdir "tools"
