@@ -40,7 +40,7 @@ if exist %stm32programmercli% (
         echo Downloading STM32CubeProgrammer
         curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
     )
-    
+
     IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
         echo Extracting STM32CubeProgrammer
         call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
@@ -152,7 +152,7 @@ if %rerun% (
 
 
 echo.
-echo Successfull Requirement Check 
+echo Successful Requirement Check 
 echo.
 pause
 
