@@ -37,14 +37,13 @@ if exist %stm32programmercli% (
 ) else (
     echo.
     IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
-    echo Downloading STM32CubeProgrammer
-    curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
+        echo Downloading STM32CubeProgrammer
+        curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
     )
-
-    ::curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"
+    
     IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
-    echo Extracting STM32CubeProgrammer
-    call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
+        echo Extracting STM32CubeProgrammer
+        call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
     )
 
     echo Installing STM32CubeProgrammer
@@ -55,8 +54,11 @@ if exist %stm32programmercli% (
 python --version 2>NUL
 if errorlevel 1 (
     echo.
+    IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
+        echo Downloading Python
+        curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
+    )
     echo Installing Python
-    curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
     call  .\tools\python-3.10.7-amd64.exe /passive InstallAllUsers=1 PrependPath=1 Include_test=0 
     set rerun=1==1
     echo.
@@ -70,8 +72,11 @@ if errorlevel 1 (
 call az --version 2>NUL
 if errorlevel 1 (
     echo.
+    IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
+        echo Downloading AZ CLI
+        curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
+    )
     echo Installing AZCLI
-    curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
     call .\tools\azure-cli-2.40.0.msi
     set rerun=1==1
     echo.
@@ -87,8 +92,11 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
     echo X-CUBE-AZURE Successfully Installed
     echo.
 ) else (
-    echo Downloading X-CUBE-AZURE
-    curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
+    
+    IF NOT EXIST .\tools\en.x-cube-azure_v2-1-0.zip (
+        echo Downloading X-CUBE-AZURE
+        curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
+    )
     echo Extracting X-CUBE-AZURE
     powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
@@ -103,8 +111,12 @@ if %rerun% (
         echo.
         echo ERR: pip Not Installed 
         echo Pip will now be installed
-        curl %DOWNLOAD_LINK_GET_PIP" -o get-pip.py
-        python get-pip.py
+        IF NOT EXIST .\tools\get-pip.py (
+            echo Downloading pip
+            curl %DOWNLOAD_LINK_GET_PIP% -o ".\tools\get-pip.py"
+        )
+        echo Installing pip
+        call python .\tools\get-pip.py
         echo.
     ) else (
         echo.
