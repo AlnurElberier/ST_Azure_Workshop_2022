@@ -20,11 +20,11 @@ import random
 
 CONFIG_PATH     = 'C:\\STM32CubeExpansion_Cloud_AZURE_V2.1.0\\Projects\\B-U585I-IOT02A\\Applications\\TFM_Azure_IoT\\AzureScripts\\Config.json'
 SUB             = 'y'
-APP_NAME        = 'montreal'
+APP_NAME        = 'devcon'
 SSID            = 'st_iot_demo'
 PSWD            = 'stm32u585'
-RESOURCE_GROUP  = 'montreal'
-LOCATION        = 'eastus'
+RESOURCE_GROUP  = 'devcon'
+LOCATION        = 'westus'
 
 
 
