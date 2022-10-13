@@ -22,6 +22,7 @@ set Python_Required_Version="Python 3.10.7"
 set STM32CubeProgrammer_CLI="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
 
+
 set rerun=1==0
 
 set DOWNLOAD_LINK_STM32_CUBE_PROG="https://stm32iot.blob.core.windows.net/firmware/en.stm32cubeprg-win64_v2-11-0.zip"
@@ -31,6 +32,8 @@ set DOWNLOAD_LINK_X_CUBE_AZURE="https://stm32iot.blob.core.windows.net/firmware/
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
 set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
+set DOWNLOAD_LINK_GIT="https://gitforwindows.org/"
+
 echo. 
 
 
@@ -40,16 +43,36 @@ echo.
 Ping www.google.com -n 1 -w 1000 > null
 
 if errorlevel 1 (
-    echo You are not connected to the Internet
-    echo Please connecto to the Internet and run the script again
+    echo You are not connected to the Internet.
+    echo Please connecto to the Internet and run the script again.
+    mshta "javascript:alert('[ERROR] You are not connected to the Internet. Please connecto to the Internet and run the script again.');close()"
     echo.
 
-    goto:exit
+    EXIT /B 1
 )
 
-IF NOT EXIST "tools\NUL" mkdir "tools"
+IF NOT EXIST "tools" mkdir "tools"
 
 echo. 
+
+call git --version 2>NUL
+if errorlevel 1 (
+
+    echo Please install git then run the script again
+    mshta "javascript:alert('Please install git then run the script again');close()"
+
+    START "" "%DOWNLOAD_LINK_GIT%"
+    
+    EXIT /B 1
+
+) else (
+  call git pull
+
+  if %ERRORLEVEL% NEQ 0 (
+     mshta "javascript:alert('Please copy the content of the USB key to your hard drive then run the script again');close()"
+    EXIT /B 1
+  )
+)
 
 ::##########################################################
 :: Check if STM32CubeProgrammer is installed with correct version
@@ -63,8 +86,8 @@ if exist %STM32CubeProgrammer_CLI% (
     call :Install_STM32CubeProgrammer
 )
 
-if %rerun% (
-    goto:exit
+if %ERRORLEVEL% NEQ 0 (
+    EXIT /B 1
 ) 
 
 ::##########################################################
@@ -93,8 +116,8 @@ if errorlevel 1 (
     echo.
 )
 
-if %rerun% (
-    goto:exit
+if %ERRORLEVEL% NEQ 0 (
+    EXIT /B 1
 ) 
 
 ::##########################################################
@@ -197,7 +220,7 @@ if %rerun% (
 echo.
 echo Successful Requirement Check 
 echo.
-pause
+mshta "javascript:alert('Successful Requirement Check ');close()"
 
 ::##########################################################
 :: Open STM32CubeExpansion_Cloud_AZURE directory
@@ -210,14 +233,15 @@ goto:exit
 ::##########################################################
 :err
 echo Plese run the script again
-exit /b 1
-pause
+mshta "javascript:alert('Plese run the script again');close()"
+EXIT /B 1
+:::pause
 
 ::##########################################################
 :: Exit without error
 ::##########################################################
 :exit
-exit /b 0
+EXIT /B 0
 
 ::##########################################################
 :: Install STM32CubeProgrammer
@@ -246,6 +270,7 @@ EXIT /B 0
 :: Check STM32CubeProgrammer version
 ::##########################################################
 :Check_STM32CubeProgrammer_version
+setlocal enabledelayedexpansion
 set xprvar=""
 
 %STM32CubeProgrammer_CLI% --version > STM32CubeProgrammer_version.txt
@@ -256,14 +281,16 @@ if %STM32CubeProgrammer_Required_Version% == "%xprvar%" (
     echo.
     echo STM32CubeProgrammer is uptodate
     echo.
+    EXIT /B 0
 ) else (
     echo.
     echo STM32CubeProgrammer version error
     echo Installed version: "%xprvar%"
     echo Required version : %STM32CubeProgrammer_Required_Version%
     echo please Uninstall STM32CubeProgrammer and run the script again
+    mshta "javascript:alert('[ERROR] Wrong STM32CubeProgrammer version. please Uninstall STM32CubeProgrammer and run the script again');close()"
     echo.
-    set rerun=1==1
+    EXIT /B 1
 )
 EXIT /B 0
 
@@ -272,6 +299,8 @@ EXIT /B 0
 :: Check Python version
 ::##########################################################
 :Check_Python_version
+setlocal enabledelayedexpansion
+
 set xprvar=""
 
 python --version > Python_version.txt
@@ -282,13 +311,16 @@ if %Python_Required_Version% == "%xprvar%" (
     echo.
     echo Python is uptodate
     echo.
+    EXIT /B 0
 ) else (
     echo.
     echo Python version error
     echo Installed version: "%xprvar%"
     echo Required version : %Python_Required_Version%
     echo please Uninstall Python and run the script again
+    mshta "javascript:alert('[ERROR] Wrong Python version. please Uninstall Python and run the script again');close()"
     echo.
-    set rerun=1==1
+    EXIT /B 1
+
 )
 EXIT /B 0
