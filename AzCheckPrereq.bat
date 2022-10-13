@@ -32,7 +32,6 @@ set DOWNLOAD_LINK_X_CUBE_AZURE="https://stm32iot.blob.core.windows.net/firmware/
 set DOWNLOAD_LINK_PYTHON="https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe"
 set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2.40.0.msi"
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
-set DOWNLOAD_LINK_GIT="https://gitforwindows.org/"
 
 echo. 
 
@@ -54,25 +53,6 @@ if errorlevel 1 (
 IF NOT EXIST "tools" mkdir "tools"
 
 echo. 
-
-call git --version 2>NUL
-if errorlevel 1 (
-
-    echo Please install git then run the script again
-    mshta "javascript:alert('Please install git then run the script again');close()"
-
-    START "" "%DOWNLOAD_LINK_GIT%"
-    
-    EXIT /B 1
-
-) else (
-  call git pull
-
-  if %ERRORLEVEL% NEQ 0 (
-     mshta "javascript:alert('Please copy the content of the USB key to your hard drive then run the script again');close()"
-    EXIT /B 1
-  )
-)
 
 ::##########################################################
 :: Check if STM32CubeProgrammer is installed with correct version
