@@ -30,78 +30,100 @@ echo.
 
 IF NOT EXIST "tools\NUL" mkdir "tools"
 
-if exist %stm32programmercli% ( 
+:: Check if STM32CubeProgrammer is installed
+if exist %stm32programmercli% (
+
+    :: STM32CubeProgrammer installed
     echo.
     echo STM32CubeProgrammer Successfully Installed
     echo.
 ) else (
     echo.
+
+    :: Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
     IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
         echo Downloading STM32CubeProgrammer
         curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
     )
 
+    :: Extract en.stm32cubeprg-win64_v2-11-0.zip
     IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
         echo Extracting STM32CubeProgrammer
         call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
     )
 
+    :: Install STM32CubeProgrammer
     echo Installing STM32CubeProgrammer
     call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
     echo.
 )
 
+:: Check if python is present
 python --version 2>NUL
 if errorlevel 1 (
     echo.
+
+    :: Download python-3.10.7-amd64.exe if not present in tools directory
     IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
         echo Downloading Python
         curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
     )
+
+    :: Install python
     echo Installing Python
     call  .\tools\python-3.10.7-amd64.exe /passive InstallAllUsers=1 PrependPath=1 Include_test=0 
     set rerun=1==1
     echo.
 ) else (
+
+    :: Python installed
     echo.
     echo Python Successfully Installed
     echo.
 )
 
-
+:: Check if AZ CLI is installed.
 call az --version 2>NUL
 if errorlevel 1 (
     echo.
+    :: Download azure-cli-2.40.0.msi if not present in tools directory
     IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
         echo Downloading AZ CLI
         curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
     )
+
+    :: Install AZ CLI
     echo Installing AZCLI
     call .\tools\azure-cli-2.40.0.msi
     set rerun=1==1
     echo.
 ) else (
+
+    :: AZ CLI installed
     echo.
     echo AZ CLI Successfully Installed
     echo.
 )
 
-
+:: Extract X-CUBE-AZURE
 if exist %STM32CubeExpansion_Cloud_AZURE% ( 
     echo.
     echo X-CUBE-AZURE Successfully Installed
     echo.
 ) else (
     
+    :: Download en.x-cube-azure_v2-1-0.zip if not present in tools directory
     IF NOT EXIST .\tools\en.x-cube-azure_v2-1-0.zip (
         echo Downloading X-CUBE-AZURE
         curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
     )
+
+    :: Extract en.x-cube-azure_v2-1-0.zip to C:
     echo Extracting X-CUBE-AZURE
     powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
 
-
+:: Check Pip. install if not installed
 if %rerun% (
     goto:err
 ) else (
@@ -128,7 +150,7 @@ if %rerun% (
 
     call python -m pip install pyserial
 
-
+:: Install AZ extensions
     echo.
     call az extension add --name azure-iot 
     echo.
@@ -139,14 +161,16 @@ if %rerun% (
     call az extension update --name account
     echo.
 
-
     echo Redirecting to a browser window to log in to Azure Cli
     echo Please return to the script after logging in
 
+:: Open credentials.txt that contains the user email address and password
     start notepad "credentials.txt"
 
+:: Login to Azure
     call az login --allow-no-subscription
 
+:: Update the config.json file with the workshop configuration
     call python .\scripts\configureJson.py
 )
 
@@ -156,7 +180,7 @@ echo Successful Requirement Check
 echo.
 pause
 
-
+:: Open STM32CubeExpansion_Cloud_AZURE directory
 %SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
 goto:exit
 
