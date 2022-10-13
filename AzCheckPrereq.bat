@@ -15,8 +15,13 @@
 :: ******************************************************************************
 @echo off
 
-set stm32programmercli="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
+set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.11.0 "
+set Python_Required_Version="Python 3.10.7"
+
+
+set STM32CubeProgrammer_CLI="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
+
 set rerun=1==0
 
 set DOWNLOAD_LINK_STM32_CUBE_PROG="https://stm32iot.blob.core.windows.net/firmware/en.stm32cubeprg-win64_v2-11-0.zip"
@@ -28,37 +33,43 @@ set DOWNLOAD_LINK_AZCLI="https://azcliprod.blob.core.windows.net/msi/azure-cli-2
 set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
 echo. 
 
-IF NOT EXIST "tools\NUL" mkdir "tools"
 
-:: Check if STM32CubeProgrammer is installed
-if exist %stm32programmercli% (
+::##########################################################
+:: Check if computer connected to the Internet
+::##########################################################
+Ping www.google.com -n 1 -w 1000 > null
 
-    :: STM32CubeProgrammer installed
+if errorlevel 1 (
+    echo You are not connected to the Internet
+    echo Please connecto to the Internet and run the script again
     echo.
-    echo STM32CubeProgrammer Successfully Installed
-    echo.
-) else (
-    echo.
 
-    :: Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
-    IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
-        echo Downloading STM32CubeProgrammer
-        curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
-    )
-
-    :: Extract en.stm32cubeprg-win64_v2-11-0.zip
-    IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
-        echo Extracting STM32CubeProgrammer
-        call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
-    )
-
-    :: Install STM32CubeProgrammer
-    echo Installing STM32CubeProgrammer
-    call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
-    echo.
+    goto:exit
 )
 
-:: Check if python is present
+IF NOT EXIST "tools\NUL" mkdir "tools"
+
+echo. 
+
+::##########################################################
+:: Check if STM32CubeProgrammer is installed with correct version
+::##########################################################
+if exist %STM32CubeProgrammer_CLI% (
+    call :Check_STM32CubeProgrammer_version
+) else (
+    echo.
+    echo STM32CubeProgrammer missing
+    echo.    
+    call :Install_STM32CubeProgrammer
+)
+
+if %rerun% (
+    goto:exit
+) 
+
+::##########################################################
+:: Check if python is installed with correct version
+::##########################################################
 python --version 2>NUL
 if errorlevel 1 (
     echo.
@@ -78,11 +89,17 @@ if errorlevel 1 (
 
     :: Python installed
     echo.
-    echo Python Successfully Installed
+    call :Check_Python_version
     echo.
 )
 
+if %rerun% (
+    goto:exit
+) 
+
+::##########################################################
 :: Check if AZ CLI is installed.
+::##########################################################
 call az --version 2>NUL
 if errorlevel 1 (
     echo.
@@ -123,7 +140,9 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
     powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
 
+::##########################################################
 :: Check Pip. install if not installed
+::##########################################################
 if %rerun% (
     goto:err
 ) else (
@@ -180,13 +199,96 @@ echo Successful Requirement Check
 echo.
 pause
 
+::##########################################################
 :: Open STM32CubeExpansion_Cloud_AZURE directory
+::##########################################################
 %SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
 goto:exit
 
-
+::##########################################################
+:: Exit with error
+::##########################################################
 :err
 echo Plese run the script again
+exit /b 1
 pause
 
+::##########################################################
+:: Exit without error
+::##########################################################
 :exit
+exit /b 0
+
+::##########################################################
+:: Install STM32CubeProgrammer
+::##########################################################
+:Install_STM32CubeProgrammer
+echo.
+:: Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
+IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
+    echo Downloading STM32CubeProgrammer
+    curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
+)
+
+:: Extract en.stm32cubeprg-win64_v2-11-0.zip
+IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
+    echo Extracting STM32CubeProgrammer
+    call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
+)
+
+:: Install STM32CubeProgrammer
+echo Installing STM32CubeProgrammer
+call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
+echo.
+EXIT /B 0
+
+::##########################################################
+:: Check STM32CubeProgrammer version
+::##########################################################
+:Check_STM32CubeProgrammer_version
+set xprvar=""
+
+%STM32CubeProgrammer_CLI% --version > STM32CubeProgrammer_version.txt
+
+for /F "delims=" %%i in (STM32CubeProgrammer_version.txt) do set "xprvar=%%i"
+
+if %STM32CubeProgrammer_Required_Version% == "%xprvar%" ( 
+    echo.
+    echo STM32CubeProgrammer is uptodate
+    echo.
+) else (
+    echo.
+    echo STM32CubeProgrammer version error
+    echo Installed version: "%xprvar%"
+    echo Required version : %STM32CubeProgrammer_Required_Version%
+    echo please Uninstall STM32CubeProgrammer and run the script again
+    echo.
+    set rerun=1==1
+)
+EXIT /B 0
+
+
+::##########################################################
+:: Check Python version
+::##########################################################
+:Check_Python_version
+set xprvar=""
+
+python --version > Python_version.txt
+
+for /F "delims=" %%i in (Python_version.txt) do set "xprvar=%%i"
+
+if %Python_Required_Version% == "%xprvar%" ( 
+    echo.
+    echo Python is uptodate
+    echo.
+) else (
+    echo.
+    echo Python version error
+    echo Installed version: "%xprvar%"
+    echo Required version : %Python_Required_Version%
+    echo please Uninstall Python and run the script again
+    echo.
+    set rerun=1==1
+)
+EXIT /B 0
