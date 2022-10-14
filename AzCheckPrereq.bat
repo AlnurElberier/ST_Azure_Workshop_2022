@@ -73,7 +73,7 @@ if errorlevel 1  (
 )
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('[ERROR] Wrong Python version. please Uninstall Python and run the script again');close()"
+    mshta "javascript:alert('[ERROR] Wrong Python version. Please Uninstall Python and run the script again');close()"
     EXIT /B 1
 ) 
 
@@ -87,7 +87,7 @@ if errorlevel 1 (
 )
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('[ERROR] Wrong AZCLI version. Please run the script again');close()"
+    mshta "javascript:alert('[ERROR] Wrong AZCLI version. Please Uninstall AZCLI and run the script again');close()"
     EXIT /B 1
 )
 
@@ -101,6 +101,7 @@ if %rerun% (
 call :Check_Pip
 
 :: Install pyserial
+echo Installing pyserial...
 call python -m pip install pyserial
 
 :: Install AZ extensions
@@ -121,7 +122,7 @@ call az login
 
 if %ERRORLEVEL% NEQ 0 (
     echo Log in error. Plese run the script again
-    mshta "javascript:alert('Log in error. Plese run the script again');close()"
+    mshta "javascript:alert('[ERROR] Log in error. Plese run the script again');close()"
     EXIT /B 1
 ) 
 
@@ -129,7 +130,7 @@ if %ERRORLEVEL% NEQ 0 (
 call :Check_userPrincipalName
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('Log in error. Plese run the script again');close()"
+    mshta "javascript:alert('[ERROR] Log in error. Plese run the script again');close()"
     EXIT /B 1
 ) 
 
@@ -144,8 +145,10 @@ echo.
 
 :: Open STM32CubeExpansion_Cloud_AZURE directory
 %SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
-EXIT /B 0
+
 :: End of the script
+EXIT /B 0
+
 
 ::##########################################################
 :: Install Functions
@@ -156,7 +159,6 @@ EXIT /B 0
 :: Install Python
 ::##########################################################
 :Install_Python
-echo.
 rem Download python-3.10.7-amd64.exe if not present in tools directory
 IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
     echo Downloading Python
@@ -178,19 +180,25 @@ IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
     echo Downloading AZ CLI
     curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
 )
+
 rem Install AZ CLI
 echo Installing AZCLI
 call .\tools\azure-cli-2.40.0.msi
+
 EXIT /B 0
 
 ::##########################################################
 :: Install AZ extensions
 ::##########################################################
 :Install_AZ_extensions
+echo.
+echo Installing AZ extensions
+echo.
 call az extension add --name azure-iot 
 call az extension update --name azure-iot
 call az extension add --name account
 call az extension update --name account
+
 EXIT /B 0
 
 ::##########################################################
@@ -199,7 +207,8 @@ EXIT /B 0
 :Install_STM32CubeProgrammer
 echo.
 echo STM32CubeProgrammer missing
-echo. 
+echo.
+
 rem Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
 IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
     echo Downloading STM32CubeProgrammer
@@ -215,6 +224,7 @@ IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
 rem Install STM32CubeProgrammer
 echo Installing STM32CubeProgrammer
 call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
+
 EXIT /B 0
 
 ::##########################################################
@@ -237,6 +247,7 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
     echo Extracting X-CUBE-AZURE
     powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
+
 EXIT /B 0
 
 ::##########################################################
@@ -248,6 +259,7 @@ EXIT /B 0
 ::##########################################################
 :Check_Pip
 python -m pip --version 2>NUL
+
 if errorlevel 1 (
     echo.
     echo ERR: pip Not Installed 
@@ -265,9 +277,8 @@ if errorlevel 1 (
     echo.
     echo pip Successfully Installed
     echo.
-    echo Installing pyserial...
-    echo.
 )
+
 EXIT /B 0
 
 ::##########################################################
@@ -277,10 +288,13 @@ EXIT /B 0
 Ping www.google.com -n 1 -w 1000 > ping.txt
 
 if errorlevel 1 (
+    echo.
     echo You are not connected to the Internet.
     echo Please connecto to the Internet and run the script again.
+    echo.
     EXIT /B 1
 )
+
 EXIT /B 0
 
 ::##########################################################
@@ -336,7 +350,6 @@ if %Python_Required_Version% LEQ "%xprvar%" (
     echo please Uninstall Python and run the script again
     echo.
     EXIT /B 1
-
 )
 
 EXIT /B 0
@@ -356,15 +369,16 @@ set /p xprvar=<az_version.txt
 
 if %azcli_version% LEQ "%xprvar%" ( 
     echo.
-     echo AZCLI is version OK
+    echo AZCLI is version OK
     echo.
     EXIT /B 0
 ) else (
+    echo.
     echo AZCLI version error
     echo Installed version        : "%xprvar%"
     echo Minimum required version : %azcli_version%
-    call az upgrade
-    EXI /B 1
+    echo.
+    EXIT /B 1
 )
 
 EXIT /B 0
@@ -384,4 +398,5 @@ if %current_userPrincipalName% NEQ %ws_userPrincipalName% (
     echo Log in error. Plese run the script again
     EXIT /B 1
 )
+
 EXIT /B 0   
