@@ -15,9 +15,9 @@
 :: ******************************************************************************
 @echo off
 
-set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.11.0 "
-set Python_Required_Version="Python 3.10.7"
-
+set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.10.0 "
+set Python_Required_Version="Python 3.10.6"
+set azcli_version="azure-cli                         2.40.0 *"
 
 set STM32CubeProgrammer_CLI="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
@@ -121,9 +121,13 @@ if errorlevel 1 (
 
     :: AZ CLI installed
     echo.
-    echo AZ CLI Successfully Installed
+    call :Check_AZCLI_version
     echo.
 )
+
+if %ERRORLEVEL% NEQ 0 (
+    EXIT /B 1
+) 
 
 :: Extract X-CUBE-AZURE
 if exist %STM32CubeExpansion_Cloud_AZURE% ( 
@@ -257,7 +261,7 @@ set xprvar=""
 
 for /F "delims=" %%i in (STM32CubeProgrammer_version.txt) do set "xprvar=%%i"
 
-if %STM32CubeProgrammer_Required_Version% == "%xprvar%" ( 
+if %STM32CubeProgrammer_Required_Version% LEQ "%xprvar%" ( 
     echo.
     echo STM32CubeProgrammer is uptodate
     echo.
@@ -287,7 +291,7 @@ python --version > Python_version.txt
 
 for /F "delims=" %%i in (Python_version.txt) do set "xprvar=%%i"
 
-if %Python_Required_Version% == "%xprvar%" ( 
+if %Python_Required_Version% LEQ "%xprvar%" ( 
     echo.
     echo Python is uptodate
     echo.
@@ -299,6 +303,42 @@ if %Python_Required_Version% == "%xprvar%" (
     echo Required version : %Python_Required_Version%
     echo please Uninstall Python and run the script again
     mshta "javascript:alert('[ERROR] Wrong Python version. please Uninstall Python and run the script again');close()"
+    echo.
+    EXIT /B 1
+
+)
+EXIT /B 0
+
+
+
+
+::##########################################################
+:: Check AZ CLI version
+::##########################################################
+:Check_AZCLI_version
+setlocal enabledelayedexpansion
+
+set xprvar=""
+
+::call winget install -e --id Microsoft.AzureCLI
+
+:: Get AZ CLI version
+call az --version > az_version.txt
+
+set /p xprvar=<az_version.txt
+
+if %azcli_version% LEQ "%xprvar%" ( 
+    echo.
+     echo AZCLI is uptodate
+    echo.
+    EXIT /B 0
+) else (
+    echo.
+    echo AZCLI version error
+    echo Installed version: "%xprvar%"
+    echo Required version : %azcli_version%
+    call az upgrade
+    mshta "javascript:alert('[ERROR] Please run the script again');close()"
     echo.
     EXIT /B 1
 
