@@ -10,3 +10,4 @@ tools/get-pip.py
 tools/python-3.10.7-amd64.exe
 az_version.txt
 ping.txt
+userPrincipalName.txt
