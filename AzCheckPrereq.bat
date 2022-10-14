@@ -15,8 +15,8 @@
 :: ******************************************************************************
 @echo off
 
-set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.10.0 "
-set Python_Required_Version="Python 3.10.6"
+set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.11.0 "
+set Python_Required_Version="Python 3.10.7"
 set azcli_version="azure-cli                         2.40.0 *"
 
 set STM32CubeProgrammer_CLI="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
@@ -39,7 +39,7 @@ echo.
 ::##########################################################
 :: Check if computer connected to the Internet
 ::##########################################################
-Ping www.google.com -n 1 -w 1000 > null
+Ping www.google.com -n 1 -w 1000 > ping.txt
 
 if errorlevel 1 (
     echo You are not connected to the Internet.
@@ -188,10 +188,12 @@ if %rerun% (
     echo.
 
     echo Redirecting to a browser window to log in to Azure Cli
-    echo Please return to the script after logging in
+
+    mshta "javascript:alert('Redirecting to a browser window to log in to Azure Cli. Use credentials from credentials.txt file.');close()"
 
 :: Open credentials.txt that contains the user email address and password
     start notepad "credentials.txt"
+    sleep 5
 
 :: Login to Azure
     call az login --allow-no-subscription
@@ -204,7 +206,7 @@ if %rerun% (
 echo.
 echo Successful Requirement Check 
 echo.
-mshta "javascript:alert('Successful Requirement Check ');close()"
+::mshta "javascript:alert('Successful Requirement Check.');close()"
 
 ::##########################################################
 :: Open STM32CubeExpansion_Cloud_AZURE directory
@@ -309,11 +311,8 @@ if %Python_Required_Version% LEQ "%xprvar%" (
 )
 EXIT /B 0
 
-
-
-
 ::##########################################################
-:: Check AZ CLI version
+:: Function: Check AZ CLI version
 ::##########################################################
 :Check_AZCLI_version
 setlocal enabledelayedexpansion
