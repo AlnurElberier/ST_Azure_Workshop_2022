@@ -9,3 +9,4 @@ tools/azure-cli-2.40.0.msi
 tools/get-pip.py
 tools/python-3.10.7-amd64.exe
 az_version.txt
+ping.txt
