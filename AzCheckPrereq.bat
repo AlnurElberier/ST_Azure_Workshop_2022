@@ -18,6 +18,8 @@
 set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.11.0 "
 set Python_Required_Version="Python 3.10.7"
 set azcli_version="azure-cli                         2.40.0 *"
+set ws_userPrincipalName="stm32u585_outlook.com#EXT#@iotcloudservicesst.onmicrosoft.com"
+
 
 set STM32CubeProgrammer_CLI="C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_Programmer_CLI.exe"
 set STM32CubeExpansion_Cloud_AZURE="C:\STM32CubeExpansion_Cloud_AZURE_V2.1.0"
@@ -196,12 +198,13 @@ if %rerun% (
     sleep 5
 
 :: Login to Azure
-    call az login --allow-no-subscription
+    call az login
 
 :: Update the config.json file with the workshop configuration
-    call python .\scripts\configureJson.py
+   call python .\scripts\configureJson.py
 )
 
+call :Check_userPrincipalName
 
 echo.
 echo Successful Requirement Check 
@@ -343,3 +346,21 @@ if %azcli_version% LEQ "%xprvar%" (
 
 )
 EXIT /B 0
+
+
+::##########################################################
+:: Function: Check userPrincipalName
+::##########################################################
+:Check_userPrincipalName
+call az ad signed-in-user show --query userPrincipalName>userPrincipalName.txt
+
+set set current_userPrincipalName=""
+
+set /p current_userPrincipalName=<userPrincipalName.txt
+
+if %current_userPrincipalName% NEQ %ws_userPrincipalName% (
+    echo Login error. Plese run the script again
+    mshta "javascript:alert('Login error. Plese run the script again');close()"
+    EXIT /B 1
+)
+ EXIT /B 0   
