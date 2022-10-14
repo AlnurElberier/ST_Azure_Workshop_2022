@@ -113,6 +113,9 @@ mshta "javascript:alert('Redirecting to a browser window to log in to Azure. Use
 start notepad "credentials.txt"
 sleep 5
 
+:: Logout from Azure
+call az logout
+
 :: Login to Azure
 call az login
 
