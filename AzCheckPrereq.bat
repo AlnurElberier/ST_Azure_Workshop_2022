@@ -38,198 +38,156 @@ set DOWNLOAD_LINK_GET_PIP="https://bootstrap.pypa.io/get-pip.py"
 echo. 
 
 
-::##########################################################
 :: Check if computer connected to the Internet
-::##########################################################
-Ping www.google.com -n 1 -w 1000 > ping.txt
+call :Check_Internet_Connection
 
-if errorlevel 1 (
-    echo You are not connected to the Internet.
-    echo Please connecto to the Internet and run the script again.
+if %ERRORLEVEL% NEQ 0 (
     mshta "javascript:alert('[ERROR] You are not connected to the Internet. Please connecto to the Internet and run the script again.');close()"
-    echo.
-
     EXIT /B 1
 )
 
 IF NOT EXIST "tools" mkdir "tools"
 
-echo. 
+:: Extract X-CUBE-AZURE
+call :Instal_X_CUBE_AZURE
 
-::##########################################################
 :: Check if STM32CubeProgrammer is installed with correct version
-::##########################################################
 if exist %STM32CubeProgrammer_CLI% (
     call :Check_STM32CubeProgrammer_version
-) else (
-    echo.
-    echo STM32CubeProgrammer missing
-    echo.    
+) else (   
     call :Install_STM32CubeProgrammer
 )
 
 if %ERRORLEVEL% NEQ 0 (
+    mshta "javascript:alert('[ERROR] Wrong STM32CubeProgrammer version. please Uninstall STM32CubeProgrammer and run the script again');close()"
     EXIT /B 1
 ) 
 
-::##########################################################
 :: Check if python is installed with correct version
-::##########################################################
 python --version 2>NUL
-if errorlevel 1 (
-    echo.
-
-    :: Download python-3.10.7-amd64.exe if not present in tools directory
-    IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
-        echo Downloading Python
-        curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
-    )
-
-    :: Install python
-    echo Installing Python
-    call  .\tools\python-3.10.7-amd64.exe /passive InstallAllUsers=1 PrependPath=1 Include_test=0 
+if errorlevel 1  (
+    call :Install_Python
     set rerun=1==1
-    echo.
 ) else (
-
-    :: Python installed
-    echo.
     call :Check_Python_version
-    echo.
 )
 
 if %ERRORLEVEL% NEQ 0 (
+    mshta "javascript:alert('[ERROR] Wrong Python version. please Uninstall Python and run the script again');close()"
     EXIT /B 1
 ) 
 
-::##########################################################
 :: Check if AZ CLI is installed.
-::##########################################################
 call az --version 2>NUL
 if errorlevel 1 (
-    echo.
-    :: Download azure-cli-2.40.0.msi if not present in tools directory
-    IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
-        echo Downloading AZ CLI
-        curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
-    )
-
-    :: Install AZ CLI
-    echo Installing AZCLI
-    call .\tools\azure-cli-2.40.0.msi
+    call :Install_AZCLI
     set rerun=1==1
-    echo.
 ) else (
-
-    :: AZ CLI installed
-    echo.
     call :Check_AZCLI_version
-    echo.
 )
 
 if %ERRORLEVEL% NEQ 0 (
+    mshta "javascript:alert('[ERROR] Wrong AZCLI version. Please run the script again');close()"
+    EXIT /B 1
+)
+
+if %rerun% (
+    echo Plese run the script again
+    mshta "javascript:alert('Plese run the script again');close()"
+    EXIT /B 1
+)
+
+:: Check Pip. install if not installed
+call :Check_Pip
+
+:: Install pyserial
+call python -m pip install pyserial
+
+:: Install AZ extensions
+call :Install_AZ_extensions
+
+echo Redirecting to a browser window to log in to Azure
+mshta "javascript:alert('Redirecting to a browser window to log in to Azure. Use credentials from credentials.txt file.');close()"
+
+:: Open credentials.txt that contains the user email address and password
+start notepad "credentials.txt"
+sleep 5
+
+:: Login to Azure
+call az login
+
+if %ERRORLEVEL% NEQ 0 (
+    echo Log in error. Plese run the script again
+    mshta "javascript:alert('Log in error. Plese run the script again');close()"
     EXIT /B 1
 ) 
 
-:: Extract X-CUBE-AZURE
-if exist %STM32CubeExpansion_Cloud_AZURE% ( 
-    echo.
-    echo X-CUBE-AZURE Successfully Installed
-    echo.
-) else (
-    
-    :: Download en.x-cube-azure_v2-1-0.zip if not present in tools directory
-    IF NOT EXIST .\tools\en.x-cube-azure_v2-1-0.zip (
-        echo Downloading X-CUBE-AZURE
-        curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
-    )
-
-    :: Extract en.x-cube-azure_v2-1-0.zip to C:
-    echo Extracting X-CUBE-AZURE
-    powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
-)
-
-::##########################################################
-:: Check Pip. install if not installed
-::##########################################################
-if %rerun% (
-    goto:err
-) else (
-
-    python -m pip --version 2>NUL
-    if errorlevel 1 (
-        echo.
-        echo ERR: pip Not Installed 
-        echo Pip will now be installed
-        IF NOT EXIST .\tools\get-pip.py (
-            echo Downloading pip
-            curl %DOWNLOAD_LINK_GET_PIP% -o ".\tools\get-pip.py"
-        )
-        echo Installing pip
-        call python .\tools\get-pip.py
-        echo.
-    ) else (
-        echo.
-        echo pip Successfully Installed
-        echo.
-        echo Installing pyserial...
-        echo.
-    )
-
-    call python -m pip install pyserial
-
-:: Install AZ extensions
-    echo.
-    call az extension add --name azure-iot 
-    echo.
-    call az extension update --name azure-iot
-    echo.
-    call az extension add --name account
-    echo.
-    call az extension update --name account
-    echo.
-
-    echo Redirecting to a browser window to log in to Azure Cli
-
-    mshta "javascript:alert('Redirecting to a browser window to log in to Azure Cli. Use credentials from credentials.txt file.');close()"
-
-:: Open credentials.txt that contains the user email address and password
-    start notepad "credentials.txt"
-    sleep 5
-
-:: Login to Azure
-    call az login
-
-:: Update the config.json file with the workshop configuration
-   call python .\scripts\configureJson.py
-)
-
+:: Check if we are loged in to the correct account
 call :Check_userPrincipalName
 
+if %ERRORLEVEL% NEQ 0 (
+    mshta "javascript:alert('Log in error. Plese run the script again');close()"
+    EXIT /B 1
+) 
+
+:: Update the config.json file with the workshop configuration
+call python .\scripts\configureJson.py
+
+
+:: We have a successful check
 echo.
 echo Successful Requirement Check 
 echo.
-::mshta "javascript:alert('Successful Requirement Check.');close()"
 
-::##########################################################
 :: Open STM32CubeExpansion_Cloud_AZURE directory
-::##########################################################
 %SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
-goto:exit
+EXIT /B 0
+:: End of the script
 
 ::##########################################################
-:: Exit with error
+:: Install Functions
 ::##########################################################
-:err
-echo Plese run the script again
-mshta "javascript:alert('Plese run the script again');close()"
-EXIT /B 1
-:::pause
+
 
 ::##########################################################
-:: Exit without error
+:: Install Python
 ::##########################################################
-:exit
+:Install_Python
+echo.
+rem Download python-3.10.7-amd64.exe if not present in tools directory
+IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
+    echo Downloading Python
+    curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
+)
+
+rem Install python
+echo Installing Python
+call  .\tools\python-3.10.7-amd64.exe /passive InstallAllUsers=1 PrependPath=1 Include_test=0 
+    
+EXIT /B 0
+
+::##########################################################
+:: Install AZCLI
+::##########################################################
+:Install_AZCLI
+rem Download azure-cli-2.40.0.msi if not present in tools directory
+IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
+    echo Downloading AZ CLI
+    curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
+)
+rem Install AZ CLI
+echo Installing AZCLI
+call .\tools\azure-cli-2.40.0.msi
+EXIT /B 0
+
+::##########################################################
+:: Install AZ extensions
+::##########################################################
+:Install_AZ_extensions
+call az extension add --name azure-iot 
+call az extension update --name azure-iot
+call az extension add --name account
+call az extension update --name account
 EXIT /B 0
 
 ::##########################################################
@@ -237,22 +195,89 @@ EXIT /B 0
 ::##########################################################
 :Install_STM32CubeProgrammer
 echo.
-:: Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
+echo STM32CubeProgrammer missing
+echo. 
+rem Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
 IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
     echo Downloading STM32CubeProgrammer
     curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
 )
 
-:: Extract en.stm32cubeprg-win64_v2-11-0.zip
+rem Extract en.stm32cubeprg-win64_v2-11-0.zip
 IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
     echo Extracting STM32CubeProgrammer
     call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
 )
 
-:: Install STM32CubeProgrammer
+rem Install STM32CubeProgrammer
 echo Installing STM32CubeProgrammer
 call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
-echo.
+EXIT /B 0
+
+::##########################################################
+:: Install X-CUBE-AZURE
+::##########################################################
+:Instal_X_CUBE_AZURE
+if exist %STM32CubeExpansion_Cloud_AZURE% ( 
+    echo.
+    echo X-CUBE-AZURE Successfully Installed
+    echo.
+) else (
+    
+    rem Download en.x-cube-azure_v2-1-0.zip if not present in tools directory
+    IF NOT EXIST .\tools\en.x-cube-azure_v2-1-0.zip (
+        echo Downloading X-CUBE-AZURE
+        curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
+    )
+
+    rem Extract en.x-cube-azure_v2-1-0.zip to C:
+    echo Extracting X-CUBE-AZURE
+    powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
+)
+EXIT /B 0
+
+::##########################################################
+:: Check Functions
+::##########################################################
+
+::##########################################################
+:: Check Pip. install if not installed
+::##########################################################
+:Check_Pip
+python -m pip --version 2>NUL
+if errorlevel 1 (
+    echo.
+    echo ERR: pip Not Installed 
+    echo Pip will now be installed
+    
+    IF NOT EXIST .\tools\get-pip.py (
+        echo Downloading pip
+        curl %DOWNLOAD_LINK_GET_PIP% -o ".\tools\get-pip.py"
+    )
+    
+    echo Installing pip
+    call python .\tools\get-pip.py
+    echo.
+) else (
+    echo.
+    echo pip Successfully Installed
+    echo.
+    echo Installing pyserial...
+    echo.
+)
+EXIT /B 0
+
+::##########################################################
+:: Check if computer is connected to the Internet
+::##########################################################
+:Check_Internet_Connection
+Ping www.google.com -n 1 -w 1000 > ping.txt
+
+if errorlevel 1 (
+    echo You are not connected to the Internet.
+    echo Please connecto to the Internet and run the script again.
+    EXIT /B 1
+)
 EXIT /B 0
 
 ::##########################################################
@@ -274,15 +299,14 @@ if %STM32CubeProgrammer_Required_Version% LEQ "%xprvar%" (
 ) else (
     echo.
     echo STM32CubeProgrammer version error
-    echo Installed version: "%xprvar%"
-    echo Required version : %STM32CubeProgrammer_Required_Version%
+    echo Installed version        : "%xprvar%"
+    echo Minimum required version : %STM32CubeProgrammer_Required_Version%
     echo please Uninstall STM32CubeProgrammer and run the script again
-    mshta "javascript:alert('[ERROR] Wrong STM32CubeProgrammer version. please Uninstall STM32CubeProgrammer and run the script again');close()"
     echo.
     EXIT /B 1
 )
-EXIT /B 0
 
+EXIT /B 0
 
 ::##########################################################
 :: Check Python version
@@ -304,14 +328,14 @@ if %Python_Required_Version% LEQ "%xprvar%" (
 ) else (
     echo.
     echo Python version error
-    echo Installed version: "%xprvar%"
-    echo Required version : %Python_Required_Version%
+    echo Installed version        : "%xprvar%"
+    echo Minimum required version : %Python_Required_Version%
     echo please Uninstall Python and run the script again
-    mshta "javascript:alert('[ERROR] Wrong Python version. please Uninstall Python and run the script again');close()"
     echo.
     EXIT /B 1
 
 )
+
 EXIT /B 0
 
 ::##########################################################
@@ -322,29 +346,24 @@ setlocal enabledelayedexpansion
 
 set xprvar=""
 
-::call winget install -e --id Microsoft.AzureCLI
-
-:: Get AZ CLI version
+rem Get AZ CLI version
 call az --version > az_version.txt
 
 set /p xprvar=<az_version.txt
 
 if %azcli_version% LEQ "%xprvar%" ( 
     echo.
-     echo AZCLI is uptodate
+     echo AZCLI is version OK
     echo.
     EXIT /B 0
 ) else (
-    echo.
     echo AZCLI version error
-    echo Installed version: "%xprvar%"
-    echo Required version : %azcli_version%
+    echo Installed version        : "%xprvar%"
+    echo Minimum required version : %azcli_version%
     call az upgrade
-    mshta "javascript:alert('[ERROR] Please run the script again');close()"
-    echo.
-    EXIT /B 1
-
+    EXI /B 1
 )
+
 EXIT /B 0
 
 
@@ -359,8 +378,7 @@ set set current_userPrincipalName=""
 set /p current_userPrincipalName=<userPrincipalName.txt
 
 if %current_userPrincipalName% NEQ %ws_userPrincipalName% (
-    echo Login error. Plese run the script again
-    mshta "javascript:alert('Login error. Plese run the script again');close()"
+    echo Log in error. Plese run the script again
     EXIT /B 1
 )
- EXIT /B 0   
+EXIT /B 0   
