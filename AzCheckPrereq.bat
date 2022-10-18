@@ -15,7 +15,7 @@
 :: ******************************************************************************
 @echo off
 
-set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.11.0 "
+set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.09.0 "
 set Python_Required_Version="Python 3.10.7"
 set azcli_version="azure-cli                         2.40.0 *"
 set ws_userPrincipalName="stm32u585_outlook.com#EXT#@iotcloudservicesst.onmicrosoft.com"
@@ -39,7 +39,7 @@ echo.
 
 
 :: Check if computer connected to the Internet
-call :Check_Internet_Connection
+::call :Check_Internet_Connection
 
 if %ERRORLEVEL% NEQ 0 (
     mshta "javascript:alert('[ERROR] You are not connected to the Internet. Please connecto to the Internet and run the script again.');close()"
@@ -112,7 +112,7 @@ mshta "javascript:alert('Redirecting to a browser window to log in to Azure. Use
 
 :: Open credentials.txt that contains the user email address and password
 start notepad "credentials.txt"
-sleep 5
+timeout 5
 
 :: Logout from Azure
 call az logout
