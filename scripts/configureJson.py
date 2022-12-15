@@ -17,18 +17,13 @@
 import json
 import random
 
-
 CONFIG_PATH     = 'C:\\STM32CubeExpansion_Cloud_AZURE_V2.1.0\\Projects\\B-U585I-IOT02A\\Applications\\TFM_Azure_IoT\\AzureScripts\\Config.json'
 SUB             = 'y'
-APP_NAME        = 'devcon'
+APP_NAME        = 'vws23q1'
 SSID            = 'st_iot_demo'
 PSWD            = 'stm32u585'
-RESOURCE_GROUP  = 'devcon'
+RESOURCE_GROUP  = 'vws23q1'
 LOCATION        = 'westus'
-
-
-
-
 
 # Load credentials from the CONFIG_PATH into credentials dictionary
 def loadCredentials(CONFIG_PATH):
@@ -42,8 +37,6 @@ def writeCredentialsToFile(credentials, CONFIG_PATH):
     with open(CONFIG_PATH, 'w') as outfile:
         json.dump(credentials, outfile, indent=4)
 
-
-
 def main():
     credentials = loadCredentials(CONFIG_PATH)
 
@@ -55,8 +48,6 @@ def main():
     credentials['Entered']['Location'] = LOCATION
 
     writeCredentialsToFile(credentials, CONFIG_PATH)
-
-
 
 if __name__ == "__main__":
     main()

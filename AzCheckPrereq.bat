@@ -15,7 +15,7 @@
 :: ******************************************************************************
 @echo off
 
-set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.09.0 "
+set STM32CubeProgrammer_Required_Version="STM32CubeProgrammer version: 2.10.0 "
 set Python_Required_Version="Python 3.10.7"
 set azcli_version="azure-cli                         2.40.0 *"
 set ws_userPrincipalName="stm32u585_outlook.com#EXT#@iotcloudservicesst.onmicrosoft.com"
@@ -39,7 +39,7 @@ echo.
 
 
 :: Check if computer connected to the Internet
-::call :Check_Internet_Connection
+call :Check_Internet_Connection
 
 if %ERRORLEVEL% NEQ 0 (
     mshta "javascript:alert('[ERROR] You are not connected to the Internet. Please connecto to the Internet and run the script again.');close()"
@@ -59,7 +59,7 @@ if exist %STM32CubeProgrammer_CLI% (
 )
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('[ERROR] Wrong STM32CubeProgrammer version. please Uninstall STM32CubeProgrammer and run the script again');close()"
+    mshta "javascript:alert('[ERROR] Unsupported STM32CubeProgrammer version. please uninstall STM32CubeProgrammer and run the script again');close()"
     EXIT /B 1
 ) 
 
@@ -73,7 +73,7 @@ if errorlevel 1  (
 )
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('[ERROR] Wrong Python version. Please Uninstall Python and run the script again');close()"
+    mshta "javascript:alert('[ERROR] Unsupported Python version. Please uninstall Python and run the script again');close()"
     EXIT /B 1
 ) 
 
@@ -87,15 +87,12 @@ if errorlevel 1 (
 )
 
 if %ERRORLEVEL% NEQ 0 (
-    mshta "javascript:alert('[ERROR] Wrong AZCLI version. Please Uninstall AZCLI and run the script again');close()"
+    mshta "javascript:alert('[ERROR] Unsupported AZCLI version. Please uninstall AZCLI and run the script again');close()"
     EXIT /B 1
 )
 
-if %rerun% (
-    echo Plese run the script again
-    mshta "javascript:alert('Plese run the script again');close()"
-    EXIT /B 1
-)
+:: Refresh the envirement variables
+call :RefreshEnvironment
 
 :: Check Pip. install if not installed
 call :Check_Pip
@@ -107,8 +104,10 @@ call python -m pip install pyserial
 :: Install AZ extensions
 call :Install_AZ_extensions
 
+goto :sucess
+
 echo Redirecting to a browser window to log in to Azure
-mshta "javascript:alert('Redirecting to a browser window to log in to Azure. Use credentials from credentials.txt file.');close()"
+mshta "javascript:alert('[INFO] Redirecting to a browser window to log in to Azure. Use credentials from credentials.txt file.');close()"
 
 :: Open credentials.txt that contains the user email address and password
 start notepad "credentials.txt"
@@ -139,9 +138,12 @@ call python .\scripts\configureJson.py
 
 
 :: We have a successful check
+:sucess
 echo.
 echo Successful Requirement Check 
 echo.
+
+EXIT /B 0
 
 :: Open STM32CubeExpansion_Cloud_AZURE directory
 %SystemRoot%\explorer.exe %STM32CubeExpansion_Cloud_AZURE%
@@ -149,17 +151,17 @@ echo.
 :: End of the script
 EXIT /B 0
 
-
 ::##########################################################
 :: Install Functions
 ::##########################################################
-
 
 ::##########################################################
 :: Install Python
 ::##########################################################
 :Install_Python
+
 rem Download python-3.10.7-amd64.exe if not present in tools directory
+
 IF NOT EXIST .\tools\python-3.10.7-amd64.exe (
     echo Downloading Python
     curl  %DOWNLOAD_LINK_PYTHON% -o ".\tools\python-3.10.7-amd64.exe"
@@ -175,7 +177,9 @@ EXIT /B 0
 :: Install AZCLI
 ::##########################################################
 :Install_AZCLI
+
 rem Download azure-cli-2.40.0.msi if not present in tools directory
+
 IF NOT EXIST .\tools\azure-cli-2.40.0.msi (
     echo Downloading AZ CLI
     curl %DOWNLOAD_LINK_AZCLI% -o ".\tools\azure-cli-2.40.0.msi"
@@ -191,6 +195,7 @@ EXIT /B 0
 :: Install AZ extensions
 ::##########################################################
 :Install_AZ_extensions
+
 echo.
 echo Installing AZ extensions
 echo.
@@ -205,23 +210,27 @@ EXIT /B 0
 :: Install STM32CubeProgrammer
 ::##########################################################
 :Install_STM32CubeProgrammer
+
 echo.
 echo STM32CubeProgrammer missing
 echo.
 
 rem Download en.stm32cubeprg-win64_v2-11-0.zip if not present in tools directory
+
 IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0.zip (
     echo Downloading STM32CubeProgrammer
     curl %DOWNLOAD_LINK_STM32_CUBE_PROG% -o ".\tools\en.stm32cubeprg-win64_v2-11-0.zip"   
 )
 
 rem Extract en.stm32cubeprg-win64_v2-11-0.zip
+
 IF NOT EXIST .\tools\en.stm32cubeprg-win64_v2-11-0 (
     echo Extracting STM32CubeProgrammer
     call powershell -command "Expand-Archive .\tools\en.stm32cubeprg-win64_v2-11-0.zip .\tools\en.stm32cubeprg-win64_v2-11-0"
 )
 
 rem Install STM32CubeProgrammer
+
 echo Installing STM32CubeProgrammer
 call .\tools\en.stm32cubeprg-win64_v2-11-0\SetupSTM32CubeProgrammer_win64.exe
 
@@ -231,6 +240,7 @@ EXIT /B 0
 :: Install X-CUBE-AZURE
 ::##########################################################
 :Instal_X_CUBE_AZURE
+
 if exist %STM32CubeExpansion_Cloud_AZURE% ( 
     echo.
     echo X-CUBE-AZURE Successfully Installed
@@ -238,12 +248,14 @@ if exist %STM32CubeExpansion_Cloud_AZURE% (
 ) else (
     
     rem Download en.x-cube-azure_v2-1-0.zip if not present in tools directory
+
     IF NOT EXIST .\tools\en.x-cube-azure_v2-1-0.zip (
         echo Downloading X-CUBE-AZURE
         curl %DOWNLOAD_LINK_X_CUBE_AZURE% -o ".\tools\en.x-cube-azure_v2-1-0.zip"
     )
 
     rem Extract en.x-cube-azure_v2-1-0.zip to C:
+
     echo Extracting X-CUBE-AZURE
     powershell -command "Expand-Archive .\tools\en.x-cube-azure_v2-1-0.zip C:\."
 )
@@ -258,6 +270,7 @@ EXIT /B 0
 :: Check Pip. install if not installed
 ::##########################################################
 :Check_Pip
+
 python -m pip --version 2>NUL
 
 if errorlevel 1 (
@@ -285,7 +298,8 @@ EXIT /B 0
 :: Check if computer is connected to the Internet
 ::##########################################################
 :Check_Internet_Connection
-Ping www.google.com -n 1 -w 1000 > ping.txt
+
+Ping www.st.com -n 1 -w 1000 > ping.txt
 
 if errorlevel 1 (
     echo.
@@ -301,6 +315,7 @@ EXIT /B 0
 :: Check STM32CubeProgrammer version
 ::##########################################################
 :Check_STM32CubeProgrammer_version
+
 setlocal enabledelayedexpansion
 set xprvar=""
 
@@ -329,6 +344,7 @@ EXIT /B 0
 :: Check Python version
 ::##########################################################
 :Check_Python_version
+
 setlocal enabledelayedexpansion
 
 set xprvar=""
@@ -358,6 +374,7 @@ EXIT /B 0
 :: Function: Check AZ CLI version
 ::##########################################################
 :Check_AZCLI_version
+
 setlocal enabledelayedexpansion
 
 set xprvar=""
@@ -383,11 +400,11 @@ if %azcli_version% LEQ "%xprvar%" (
 
 EXIT /B 0
 
-
 ::##########################################################
 :: Function: Check userPrincipalName
 ::##########################################################
 :Check_userPrincipalName
+
 call az ad signed-in-user show --query userPrincipalName>userPrincipalName.txt
 
 set set current_userPrincipalName=""
@@ -399,4 +416,21 @@ if %current_userPrincipalName% NEQ %ws_userPrincipalName% (
     EXIT /B 1
 )
 
-EXIT /B 0   
+EXIT /B 0
+
+::##########################################################
+:: Function: Refresh Environment variales
+::##########################################################
+:RefreshEnvironment
+::curl https://raw.githubusercontent.com/badrelmers/RefrEnv/main/refrenv.bat -o .\scripts\refrenv.bat
+::call .\scripts\refrenv.bat
+::curl https://raw.githubusercontent.com/chocolatey/choco/0.10.15/src/chocolatey.resources/redirects/RefreshEnv.cmd -o .\scripts\RefreshEnv.cmd
+::call .\scripts\RefreshEnv.cmd
+
+::Powershell.exe -executionpolicy remotesigned -File  .\scripts\RefreshEnv.ps1
+echo Updating system variables
+::start Powershell.exe .\scripts\RefreshEnv.ps1
+::PowerShell.exe -Command "& {Start-Process PowerShell.exe -ArgumentList '-ExecutionPolicy Bypass -File "".\scripts\RefreshEnv.ps1""'}"
+Powershell -executionpolicy remotesigned -File ".\scripts\RefreshEnv.ps1"
+
+EXIT /B 0
