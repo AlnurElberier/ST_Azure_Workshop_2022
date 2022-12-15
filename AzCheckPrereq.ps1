@@ -410,7 +410,7 @@ Write-Output "AZCLI version OK"
 AZCLI_Extensions_Install
 
 Write-Output "System check successful"
-#Exit 0
+Exit 0
 
 # Locgin to Azure account
 $value = AZCLI_Login
