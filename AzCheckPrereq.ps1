@@ -47,23 +47,32 @@ function Path_Refresh
 <# Install AZCLI extensions #>
 function AZCLI_Extensions_Install()
 {
-  Write-Host "Installing AZ extensions"
+    Write-Output "Installing AZ extensions"
 
-  & az extension add --name azure-iot 
-  & az extension update --name azure-iot
-  & az extension add --name account
-  & az extension update --name account
+  try 
+  {
+    & az extension add --name azure-iot 
+    & az extension update --name azure-iot
+    & az extension add --name account
+    & az extension update --name account
+  }
+  catch
+  {
+    return 'False'
+  }
+
+  return 'True'
 }
 
 <# Locgin to Azure account #>
 function AZCLI_Login()
 {
-    Write-Host "Redirecting to a browser window to log in to Azure"
+    Write-Output "Redirecting to a browser window to log in to Azure"
     Start-Sleep -Seconds 1
 
-    Write-Host "Use the credential from  credentials.txt to log in to Azure"
-    Write-Host "credentials.txt will automatically open in 3 seconds"
-    Write-Host "Please return to the terminal after you login to Azure"
+    Write-Output "Use the credential from  credentials.txt to log in to Azure"
+    Write-Output "credentials.txt will automatically open in 3 seconds"
+    Write-Output "Please return to the terminal after you login to Azure"
 
     Start-Sleep -Seconds 3
     
@@ -90,7 +99,7 @@ function AZCLI_Login()
 <# Install Python #>
 function AZCLI_Install()
 {
-    Write-Host "Installing $Required_Version_AZCLI"
+    Write-Output "Installing $Required_Version_AZCLI"
 
     Start-Sleep -Seconds 3
 
@@ -98,7 +107,7 @@ function AZCLI_Install()
 
     if (!(Test-Path $azcli_installer))
     {
-      "Downloading AZCLI"
+      Write-Output "Downloading AZCLI"
       Import-Module BitsTransfer
       Start-BitsTransfer -Source $DOWNLOAD_LINK_AZCLI -Destination $azcli_installer
     }
@@ -115,11 +124,10 @@ function AZCLI_Check()
     Try
     {
         $azcli_version = & az --version
-        #& az --version "--version" |  Out-String | Set-Content .\AZCLI_version.txt
 
         if(!$azcli_version)
         {
-            Write-Host "AZCLI not installed"
+            Write-Output "AZCLI not installed"
             AZCLI_Install
 
             return 'True'
@@ -127,7 +135,7 @@ function AZCLI_Check()
 
         if($azcli_version -like $Required_Version_AZCLI)
         {
-            Write-Host "AZCLI $Required_Version_AZCLI installed"
+            Write-Output "AZCLI $Required_Version_AZCLI installed"
             return 'True'
         }
 
@@ -135,10 +143,9 @@ function AZCLI_Check()
     }
     Catch
     {
-        Write-Host "AZCLI not installed"
+        Write-Output "AZCLI not installed"
+        AZCLI_Install
     }
-
-    AZCLI_Install
 
     return 'True'
 }
@@ -156,7 +163,7 @@ function Python_Pip_Check()
 
     if(!$pip_version)
     {
-      Write-Host "Installing pip"
+      Write-Output "Installing pip"
 
       Start-Sleep -Seconds 3
 
@@ -172,26 +179,25 @@ function Python_Pip_Check()
     }
     else 
     {
-        Write-Host "pip installed"
+        Write-Output "pip installed"
     }
 }
 
 <# Install Python #>
 function Python_Install()
 {
-    Write-Host "Installing $Required_Version_Python"
-
     Start-Sleep -Seconds 3
 
     $python_installer = "$tools_path\python-3.10.7-amd64.exe"
 
     if (!(Test-Path $python_installer))
     {
-      "Downloading python-3.10.7"
-      Import-Module BitsTransfer
-      Start-BitsTransfer -Source $DOWNLOAD_LINK_PYTHON -Destination $python_installer
+        Write-Output "Downloading $Required_Version_Python"
+        Import-Module BitsTransfer
+        Start-BitsTransfer -Source $DOWNLOAD_LINK_PYTHON -Destination $python_installer
     }
-    
+
+    Write-Output "Installing $Required_Version_Python"
     Start-Process -Wait -FilePath  $python_installer -ArgumentList "/passive InstallAllUsers=1 PrependPath=1 Include_test=0"
 
     # Refresh envirement variables
@@ -205,11 +211,9 @@ function Python_Check()
     {
         $python_version = & python --version
 
-        #Write-Host  "$python_version"
-
         if(!$python_version)
         {
-            Write-Host "Python not installed"
+            Write-Output "Python not installed"
             Python_Install
 
             return 'True'
@@ -224,10 +228,9 @@ function Python_Check()
     }
     Catch
     {
-        Write-Host "Python not installed"
+        Write-Output "Python not installed"
+        Python_Install
     }
-
-    Python_Install
 
     return 'True'
 }
@@ -239,7 +242,7 @@ function STM32CubeProg_Install()
 
     if (!(Test-Path $stm32cubeprg))
     {
-      "Downloading STM32CubeProgrammer"
+      Write-Output "Downloading STM32CubeProgrammer"
       Import-Module BitsTransfer
       Start-BitsTransfer -Source $DOWNLOAD_LINK_STM32_CUBE_PROG -Destination "$tools_path\en.stm32cubeprg-win64_v2-11-0.zip"
     }
@@ -252,7 +255,7 @@ function STM32CubeProg_Install()
        Expand-Archive $stm32cubeprg $stm32cubeprg_extract
      }
 
-     "Installing $Required_Version_STM32CubeProgrammer"
+     Write-Output "Installing $Required_Version_STM32CubeProgrammer"
 
      Start-Process  -Wait -FilePath  $stm32cubeprg_extract"\SetupSTM32CubeProgrammer_win64.exe"
 }
@@ -262,7 +265,7 @@ function STM32CubeProg_Check
 {
     if (Test-Path -Path $PATH_STM32CubeProgrammer_CLI)
     {
-      "STM32CubeProgrammer exist"
+        Write-Output "STM32CubeProgrammer exist"
       & $PATH_STM32CubeProgrammer_CLI "--version" |  Out-String | Set-Content $log_path\STM32CubeProgrammer_version.txt
 
       foreach($line in Get-Content $log_path\STM32CubeProgrammer_version.txt) 
@@ -299,13 +302,13 @@ function X_CUBE_AZURE_Install()
 
     if (!(Test-Path $x_cube_azure))
     {
-      "Downloading X-CUBE-AZURE"
+        Write-Output "Downloading X-CUBE-AZURE"
       Import-Module BitsTransfer
       Start-BitsTransfer -Source $DOWNLOAD_LINK_X_CUBE_AZURE -Destination "$tools_path\en.x-cube-azure_v2-1-0.zip"
     }
   
-     "Installing X-CUBE-AZURE to C: drive"
-     Expand-Archive "$tools_path\en.x-cube-azure_v2-1-0.zip" "C:\."
+    Write-Output "Installing X-CUBE-AZURE to C: drive"
+    Expand-Archive "$tools_path\en.x-cube-azure_v2-1-0.zip" "C:\."
 }
 
 <# Check X-CUBE-AZURE #>
@@ -313,7 +316,7 @@ function X_CUBE_AZURE_Check
 {
   if (Test-Path -Path $PATH_STM32CubeExpansion_Cloud_AZURE) 
   {
-    "STM32CubeExpansion_Cloud_AZURE OK"
+    Write-Output "STM32CubeExpansion_Cloud_AZURE OK"  | Green
     return
   }
 
@@ -334,8 +337,23 @@ function ToolsDir_Create()
   }
 }
 
+function Green
+{
+    process { Write-Host $_ -ForegroundColor Green }
+}
+
+function Red
+{
+    process { Write-Host $_ -ForegroundColor Red }
+}
+
+function White
+{
+    process { Write-Host $_ -ForegroundColor White }
+}
+
 <#  Script start #>
-Write-Output "Script version: $Script_Version"
+Write-Output "Script version: $Script_Version"   | Green
 Write-Output "$copyright"
 Write-Output "$privacy"
 
@@ -352,10 +370,12 @@ $connection_status = Internet_Connection_Check
 
 if(!($connection_status -like 'True'))
 {
-    Write-Output "You are not connected to Internet. Please connect to Internet and run the script again"
+    Write-Output "You are not connected to Internet. Please connect to Internet and run the script again" | Red
     Start-Sleep -Seconds 2
     Exit 1
 }
+
+Write-Output "You are connected to Internet."  | Green
 
 # Check if X-CUBE-AZURE is installed
 X_CUBE_AZURE_Check
@@ -365,29 +385,29 @@ X_CUBE_AZURE_Check
 
 if(!($value -like 'True'))
 {
-    "STM32CubeProgrammer version error"
-    "Required version : $Required_Version_STM32CubeProgrammer"
-    "please Uninstall STM32CubeProgrammer and run the script again"
+    Write-Output "STM32CubeProgrammer version error"  | Red
+    Write-Output "Required version : $Required_Version_STM32CubeProgrammer"
+    Write-Output "please Uninstall STM32CubeProgrammer and run the script again"
 
     Start-Sleep -Seconds 5
     Exit 1
 }
 
-Write-Output "STM32CubeProgrammer version OK"
+Write-Output "STM32CubeProgrammer version OK"   | Green
 
 $value = Python_Check
 
 if(!($value -like 'True'))
 {
-    "Python version error"
-    "Required version : $Required_Version_Python"
-    "please Uninstall Python and run the script again"
+    Write-Output "Python version error"  | Red
+    Write-Output "Required version : $Required_Version_Python"
+    Write-Output "please Uninstall Python and run the script again"
 
     Start-Sleep -Seconds 5
     Exit 1
 }
 
-Write-Output "Python version OK"
+Write-Output "Python version OK"   | Green
 
 Python_Pip_Check
 
@@ -397,19 +417,26 @@ $value = AZCLI_Check
 
 if(!($value -like 'True'))
 {
-    "AZCLI version error"
-    "Required version : $Required_Version_AZCLI"
-    "please Uninstall AZCLI and run the script again"
+    Write-Output "AZCLI version error"  | Red
+    Write-Output "Required version : $Required_Version_AZCLI"
+    Write-Output "please Uninstall AZCLI and run the script again"
 
     Start-Sleep -Seconds 5
     Exit 1
 }
 
-Write-Output "AZCLI version OK"
+Write-Output "AZCLI version OK" | Green
 
-AZCLI_Extensions_Install
+$value = AZCLI_Extensions_Install
 
-Write-Output "System check successful"
+if(!($value -like 'True'))
+{
+    Write-Output "Issue installing AZ extensions"  | Red
+    Start-Sleep -Seconds 5
+    Exit 1
+}
+
+Write-Output "System check successful" | Green
 Exit 0
 
 # Locgin to Azure account
@@ -417,13 +444,13 @@ $value = AZCLI_Login
 
 if(!($value -like 'True'))
 {
-    Write-Output "AZCLI login error. Please run the script again and try to login again"
+    Write-Output "AZCLI login error. Please run the script again and try to login again"   | Red
 
     Start-Sleep -Seconds 5
     Exit 1
 }
 
-Write-Output "Successful AZ login"
+Write-Output "Successful AZ login" | Green
 
 & python .\scripts\configureJson.py
 
